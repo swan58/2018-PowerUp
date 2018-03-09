@@ -1,3 +1,11 @@
+/* Need to Test / add
+* - full diagnostics check
+* - get dashboards up and running add imu indicator
+*  - turn with encoders autoFunction if imu not connected
+*  - far auto modes
+*/
+
+
 #include "WPILib.h"
 #include "AHRS.h"
 #include "curtinfrc/math.h"
