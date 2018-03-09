@@ -158,8 +158,13 @@ public:
       if(!xbox->GetAButton()) pressedTurn = false;
     }
 
-    if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand) || xbox->GetBumperPressed(xbox->kLeftHand)) {
-      drive->ToggleGear();
+    // if(xbox->GetYButtonPressed() || xbox->GetBumperPressed(xbox->kRightHand) || xbox->GetBumperPressed(xbox->kLeftHand)) {
+    //   drive->ToggleGear();
+    // }
+    if(xbox->GetYButton() || xbox->GetBumper(xbox->kRightHand) || xbox->GetBumper(xbox->kLeftHand)) {
+      drive->SetSlowGear();
+    } else {
+      drive->SetFastGear();
     }
 
 //———[controller 2]—————————————————————————————————————————————————————————————
