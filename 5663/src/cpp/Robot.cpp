@@ -76,7 +76,7 @@ public:
                       0, 1);    //solenoid
     lift = new Lift(7, 8);
     ramp = new Ramp(6, 7, 4, 5);
-    man = new Manipulator(0, 2, 3 );
+    man = new Manipulator(0, 1, 2, 3);
 
     compressor = new Compressor(0);
     compressor->SetClosedLoopControl(true);
@@ -193,14 +193,14 @@ public:
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
       if(fabs(xbox2->GetY(xbox2->kLeftHand)) > 0.18) {
         man->OverrideIntake(true);
-        man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
+        man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand), -xbox2->GetX(xbox2->kLeftHand));
       } else {
         man->OverrideIntake(false);
       }
       man->Release();
     } else {
       man->Restrain();
-      man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand));
+      man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand), -xbox2->GetX(xbox2->kLeftHand));
     }
 
   //———[ramp]———————————————————————————————————————————————————————————————————

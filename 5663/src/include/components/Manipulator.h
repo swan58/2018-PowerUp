@@ -13,13 +13,13 @@
 
 namespace components {
   class Manipulator {
-    Spark *intake;
+    Spark *intakeLeft, *intakeRight;
     DoubleSolenoid *restrainer;
 
     public:
-      Manipulator(int intakePort, int restrainerFwd, int restrainerRev);
+      Manipulator(int intakePortL, int intakePortR, int restrainerFwd, int restrainerRev);
       Manipulator& operator=(const Manipulator&); //Copy Constructor
-      void SetIntakeSpeed(double speed);
+      void SetIntakeSpeed(double speed, double bias=0);
       void Restrain();
       void Release();
       void RunPeriodic();
@@ -27,7 +27,8 @@ namespace components {
 
     private:
       bool intakeOverride = false;
-      double intakeSpeed = 0.0;
-      double deadzone = 0.05;
+      double intakeSpeedL = 0.0;
+      double intakeSpeedR = 0.0;
+      double deadzone = 0.1;
   };
 }
