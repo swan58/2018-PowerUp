@@ -477,7 +477,7 @@ bool Autonomous::Sw3R() {
       if(autoDrive->DriveDistance(1, 3.7)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.8, -90, 2)) autoState++;
+      if(autoDrive->TurnAngle(0.8, -90, 1.2)) autoState++;
       break;
     case 2:
       if(autoDrive->DriveDistance(1, 0.4, 1)) autoState++;
@@ -593,6 +593,38 @@ bool Autonomous::Sc2L() {
 bool Autonomous::Sc3L() {
   switch (autoState) {
     case 0:
+      if(autoDrive->DriveDistance(1, 6.0)) autoState++;
+      break;
+    case 1:
+      if(autoDrive->TurnAngle(0.8, -90, 1.2)) autoState++;
+      break;
+    case 2:
+      if(autoDrive->DriveDistance(1, 5.0)) autoState++;
+      break;
+    case 3:
+      if(autoDrive->TurnAngle(0.8, 130, 2)) autoState++;
+      break;
+    case 4:
+      autoLift->SetHighPosition();
+      autoState++;
+      break;
+    case 5:
+      if(Wait(1.3)) autoState++;
+      break;
+    case 6:
+      if(autoDrive->DriveDistance(0.4, 0.5, 1)) autoState++;
+      break;
+    case 7:
+      autoMan->SetIntakeSpeed(1);
+      if(Wait(1)) autoState++;
+      break;
+    case 8:
+      autoMan->SetIntakeSpeed(0);
+      if(autoDrive->DriveDistance(0.4, -0.5, 1)) autoState++;
+      break;
+    case 9:
+      autoLift->SetLowPosition();
+      autoState++;
       break;
     default:
       Stop();
