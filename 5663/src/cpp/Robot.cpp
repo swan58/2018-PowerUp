@@ -1,10 +1,14 @@
 /* Need to Test / add
 * - full diagnostics check
 * - get dashboards up and running add imu indicator
-*  - turn with encoders autoFunction if imu not connected
-*  - far auto modes
+* - turn with encoders autoFunction if imu not connected
+* - far auto modes
+* - auto timings/distances changed
+* - Added override if enocoder breaks
+* - drivedistance only sets pos once
+* - removed slow gear auto settings
+* - sped up lift
 */
-
 
 #include "WPILib.h"
 #include "AHRS.h"
@@ -125,7 +129,6 @@ public:
     drive->ResetEncoder();
     lift->ResetEncoder();
     lift->SetLowPosition();
-    ramp->Reset();
 
     auton->SetFarMode((int)FarMode->GetSelected());
     auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
@@ -143,7 +146,6 @@ public:
     drive->Stop();
     lift->Stop();
     man->SetIntakeSpeed(0);
-    ramp->Reset();
     timer->Reset();
   }
 
@@ -185,17 +187,17 @@ public:
 
 //———[controller 2]—————————————————————————————————————————————————————————————
   //———[lift]———————————————————————————————————————————————————————————————————
-    if(xbox2->GetAButton()) {
+    if(xbox2->GetAButtonPressed()) {
       lift->SetLowPosition();
-    } else if(xbox2->GetBButton()) {
+    } else if(xbox2->GetBButtonPressed()) {
       lift->SetMidPosition();
-    } else if(xbox2->GetYButton()) {
+    } else if(xbox2->GetYButtonPressed()) {
       lift->SetHighPosition();
     }
     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
 
     // Lift Safety Override
-//    lift->OverrideLift(station->GetRawButton(3));
+    lift->OverrideLift(xbox2->GetBackButton());
 
   //———[manipulator]————————————————————————————————————————————————————————————
     if(xbox2->GetBumper(xbox2->kLeftHand)) {
@@ -210,16 +212,6 @@ public:
       man->Restrain();
       man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand), -xbox2->GetX(xbox2->kLeftHand));
     }
-
-  //———[ramp]———————————————————————————————————————————————————————————————————
-    if(xbox->GetXButton() && xbox2->GetXButton() && timer->GetMatchTime() < 30)  ramp->ConfirmIntentionalDeployment();
-    //if(xbox->GetXButton() && xbox2->GetXButton() && timer->HasPeriodPassed(135)) ramp->ConfirmIntentionalDeployment(); //Use if above line broke
-
-    if(xbox->GetStartButton() || xbox2->GetStartButton()) ramp->ReleaseFoulStopper();
-    if(xbox->GetBackButton() || xbox2->GetBackButton()) ramp->ResetFoulStopper();
-
-  //  if(station->GetRawButtonPressed(4)) ramp->ReleaseFoulStopper();
-  //  if(station->GetRawButton(1)) ramp->ConfirmIntentionalDeployment();
 
   //———[periodic]———————————————————————————————————————————————————————————————
   //  SmartDashboard::PutBoolean("Joystickstation1,", station->GetRawButton(1));

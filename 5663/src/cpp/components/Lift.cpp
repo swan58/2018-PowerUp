@@ -7,8 +7,8 @@ Lift::Lift(int m1, int m2) {
   motor1 = new TalonSRX(m1);
   motor2 = new TalonSRX(m2);
 
-  motor1->ConfigContinuousCurrentLimit(27, 0);
-  motor2->ConfigContinuousCurrentLimit(27, 0);
+  motor1->ConfigContinuousCurrentLimit(30, 0);
+  motor2->ConfigContinuousCurrentLimit(30, 0);
   motor1->ConfigPeakCurrentLimit(40, 0);
   motor2->ConfigPeakCurrentLimit(40, 0);
   motor1->ConfigPeakCurrentDuration(75, 0);
@@ -23,7 +23,7 @@ Lift::Lift(int m1, int m2) {
 	motor1->ConfigPeakOutputForward(1, 0);
 	motor1->ConfigPeakOutputReverse(-1, 0);
   motor1->Config_kF(0, 1023.0/maxVelocity, 10);
-  motor1->Config_kP(0, 0.2, 10);
+  motor1->Config_kP(0, 0.25, 10); // USED TO BE 0.2
   motor1->Config_kI(0, 0, 10);
   motor1->Config_kD(0, 0, 10);
   motor1->ConfigMotionAcceleration(maxVelocity*4, 10);
@@ -92,7 +92,7 @@ void Lift::SetSpeed(double speed) {
        if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
        //Upper lift boundries
        if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
-       if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.7; //Soft speed limit
+       if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.85; //Soft speed limit
        if(motor1->GetSelectedSensorVelocity(0) > 800 && GetLiftPosition() > 22000) speed = 0.2; //Hardstop
        if(motor1->GetSelectedSensorVelocity(0) > 1200 && GetLiftPosition() > 22000) speed = 0.05; //Hardstop
      }
@@ -120,12 +120,12 @@ void Lift::RunPeriodic() {
   else motor1->ConfigPeakOutputReverse(-1, 0);
 
   if(pos < lastpos) {
-    motor1->ConfigMotionAcceleration(maxVelocity*2, 10);
-    motor1->ConfigMotionCruiseVelocity(maxVelocity*2, 10);
+    motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
+    motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
     lastpos = pos;
   } else if(pos > lastpos) {
-    motor1->ConfigMotionAcceleration(maxVelocity*5, 10);
-    motor1->ConfigMotionCruiseVelocity(maxVelocity*6, 10);
+    motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
+    motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
     lastpos = pos;
   }
 

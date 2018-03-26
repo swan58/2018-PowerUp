@@ -4,8 +4,6 @@ using namespace components;
 
 // Constructor for Manipulator class
 Manipulator::Manipulator(int intakePortL, int intakePortR, int restrainerFwd, int restrainerRev) {
-//  intakeLeft = new Spark(intakePortL);
-  //intakeRight = new Spark(intakePortR);
    left = new TalonSRX(intakePortL);
    right = new TalonSRX(intakePortR);
   restrainer = new DoubleSolenoid(0, restrainerFwd, restrainerRev);
@@ -51,10 +49,8 @@ void Manipulator::OverrideIntake(bool overridden) {
 }
 
 void Manipulator::RunPeriodic() {
-   left->Set(ControlMode::PercentOutput, intakeSpeedL);
-   right->Set(ControlMode::PercentOutput, intakeSpeedR);
-  //intakeLeft->Set(intakeSpeedL);
-  //intakeRight->Set(intakeSpeedR);
+  left->Set(ControlMode::PercentOutput, intakeSpeedL);
+  right->Set(ControlMode::PercentOutput, intakeSpeedR);
   SmartDashboard::PutNumber("Intake Speed L", intakeSpeedL);
   SmartDashboard::PutNumber("Intake Speed R", intakeSpeedR);
   if(restrainer->Get() == restrainer->kReverse) SmartDashboard::PutBoolean("Open/Closed", true); //Open

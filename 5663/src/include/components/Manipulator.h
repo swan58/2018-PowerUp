@@ -13,7 +13,6 @@
 
 namespace components {
   class Manipulator {
-  //  Spark *intakeLeft, *intakeRight;
     DoubleSolenoid *restrainer;
 
     public:

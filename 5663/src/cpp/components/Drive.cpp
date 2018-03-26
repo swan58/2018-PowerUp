@@ -80,11 +80,11 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 
 bool Drive::EncoderTurn(double speed, double angle, double timeout) {
   if(driving) {
-    left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
-    right1->Set(ControlMode::MotionMagic, -finalDistance);
+    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, -rightFinalDistance);
 
-    if(abs(finalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
-      if(abs(finalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
+    if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
+      if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
         Stop();
         driving = false;
         return true;
@@ -103,7 +103,8 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
     int acceleration = 200;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
-    finalDistance = encoderCount;
+    leftFinalDistance = encoderCount;
+    rightFinalDistance = encoderCount;
     //setup PID and start driving...
     left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
     left1->ConfigNominalOutputReverse(0,0);
@@ -155,7 +156,7 @@ bool Drive::TurnAngle(double speed, double angle, double timeout) {
         checkingAngle = true;
     } else checkingAngle = false;
 
-    if(positionCheck->HasPeriodPassed(0.3) && checkingAngle) {
+    if(positionCheck->HasPeriodPassed(0.1) && checkingAngle) { //used to be 0.3
       turning = false;
       SetRampRate(0);
       turn->Disable();
@@ -186,14 +187,14 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
   if(!driving) { // Run setup
     int encoderCount = 0;
     encoderCount = kFG * distance;
-    // if(currentGear) encoderCount = kFG * distance;
-    // else encoderCount = kSG * distance;
-    double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
-    int acceleration = 380;
-    if(currentGear) acceleration = 200;
+    double F = 3.5, P = 4.0, I = 0, D = 0;
+    // int acceleration = 380;
+    // if(currentGear) acceleration = 200;
+    int acceleration = 600; // NEW
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
-    finalDistance = encoderCount;
+    leftFinalDistance = encoderCount;
+    rightFinalDistance = encoderCount;
     //setup PID and start driving...
     left1->ConfigNominalOutputForward(0,0); //configuring the left encoder PID
     left1->ConfigNominalOutputReverse(0,0);
@@ -203,7 +204,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     left1->ConfigMotionAcceleration(acceleration, 0);
 
     left1->Config_kF(0,F,0); //set left PID-F values
-    left1->Config_kP(0,P,0);  //4.2
+    left1->Config_kP(0,P,0);
     left1->Config_kI(0,I,0);
     left1->Config_kD(0,D,0);
 
@@ -221,13 +222,28 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
 
     driving = true;
     timeoutCheck->Reset();
-  } else {
-    //run driving code
-    left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
-    right1->Set(ControlMode::MotionMagic, finalDistance);
+    left1->Set(ControlMode::MotionMagic, leftFinalDistance); //drive code in this format
+    right1->Set(ControlMode::MotionMagic, rightFinalDistance); //MOVED THESE LINES
 
-    if(abs(finalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
-      if(abs(finalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(finalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * finalDistance >= 0) {
+  } else {
+
+    if((abs(left1->GetSelectedSensorPosition(0)) == 1 || left1->GetSelectedSensorPosition(0) == 0) && abs(right1->GetSelectedSensorPosition(0)) > 100) {
+      //encoder broke on left
+      SmartDashboard::PutBoolean("Encoder Broke: ", true);
+      left1->Set(ControlMode::PercentOutput, right1->GetMotorOutputPercent());
+      leftFinalDistance = 0;
+    }
+    else if((abs(right1->GetSelectedSensorPosition(0)) == 1 || right1->GetSelectedSensorPosition(0) == 0) && abs(left1->GetSelectedSensorPosition(0)) > 100) {
+      //encoder broke on right
+      SmartDashboard::PutBoolean("Encoder Broke: ", true);
+      right1->Set(ControlMode::PercentOutput, left1->GetMotorOutputPercent());
+      rightFinalDistance = 0;
+    } else {
+      SmartDashboard::PutBoolean("Encoder Broke: ", false);
+    }
+
+    if(abs(leftFinalDistance) + driveTolerance > abs(left1->GetSelectedSensorPosition(0)) &&  abs(leftFinalDistance) - driveTolerance < abs(left1->GetSelectedSensorPosition(0)) && left1->GetSelectedSensorPosition(0) * leftFinalDistance >= 0) {
+      if(abs(rightFinalDistance) + driveTolerance > abs(right1->GetSelectedSensorPosition(0)) &&  abs(rightFinalDistance) - driveTolerance < abs(right1->GetSelectedSensorPosition(0)) && right1->GetSelectedSensorPosition(0) * rightFinalDistance >= 0) {
         Stop();
         driving = false;
         return true;

@@ -34,6 +34,6 @@ namespace components {
       bool manualMode = false;
       bool encoderOverride = false;
       int pos = 3, lastpos = 3, midPosition = 11000, highPosition = 25000;
-      double deadzone = 0.25, maxVelocity = 1800;
+      double deadzone = 0.25, maxVelocity = 2000; //USED TO BE 1800
   };
 }

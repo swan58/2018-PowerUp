@@ -58,8 +58,8 @@ namespace components {
       int slowGear = gearMode->kReverse;
       int fastGear = gearMode->kForward;
       double deadzone = 0.015;
-      bool currentGear = false;
-      int finalDistance = 0;
+      bool currentGear = true;
+      int leftFinalDistance = 0, rightFinalDistance = 0;
       double starting_time;
   };
 }
