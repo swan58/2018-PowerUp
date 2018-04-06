@@ -23,6 +23,7 @@ namespace components {
       void SetHighPosition();
       void SetMidPosition();
       void SetLowPosition();
+      void SetCustomPosition(int pos);
       void Stop();
       void SetSpeed(double speed);
       void ResetEncoder();

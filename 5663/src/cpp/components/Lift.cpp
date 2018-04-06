@@ -38,9 +38,18 @@ Lift::Lift(int m1, int m2) {
 // Move lift to high position (for scale)
 void Lift::SetHighPosition() {
   if(!encoderOverride) {
-    motor1->Set(ControlMode::PercentOutput, 0);
-    motor1->Set(ControlMode::MotionMagic, highPosition);
     pos = 2;
+    if(highPosition < GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      lastpos = pos;
+    } else if(highPosition > GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
+      lastpos = pos;
+    }
+    //motor1->Set(ControlMode::PercentOutput, 0); COMMENTED THESE LINES OUT!!!!
+    motor1->Set(ControlMode::MotionMagic, highPosition);
     manualMode = false;
   }
 }
@@ -48,9 +57,18 @@ void Lift::SetHighPosition() {
 // Move lift to mid position (for switch)
 void Lift::SetMidPosition() {
   if(!encoderOverride) {
-    motor1->Set(ControlMode::PercentOutput, 0);
-    motor1->Set(ControlMode::MotionMagic, midPosition);
     pos = 1;
+    if(midPosition < GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      lastpos = pos;
+    } else if(midPosition > GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
+      lastpos = pos;
+    }
+    //motor1->Set(ControlMode::PercentOutput, 0);
+    motor1->Set(ControlMode::MotionMagic, midPosition);
     manualMode = false;
   }
 }
@@ -58,9 +76,27 @@ void Lift::SetMidPosition() {
 // Move lift to low position
 void Lift::SetLowPosition() {
   if(!encoderOverride) {
-    motor1->Set(ControlMode::PercentOutput, 0);
-    motor1->Set(ControlMode::MotionMagic, 0);
     pos = 0;
+    if(0 < GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      lastpos = pos;
+    } else if(0 > GetLiftPosition()) {
+      motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
+      lastpos = pos;
+    }
+    //motor1->Set(ControlMode::PercentOutput, 0);
+    motor1->Set(ControlMode::MotionMagic, 0);
+    manualMode = false;
+  }
+}
+
+void Lift::SetCustomPosition(int pos) {
+  if(!encoderOverride) {
+    //motor1->Set(ControlMode::PercentOutput, 0)
+    motor1->Set(ControlMode::MotionMagic, pos);
+    pos = 3;
     manualMode = false;
   }
 }
@@ -119,15 +155,15 @@ void Lift::RunPeriodic() {
   if(GetLiftPosition() < 4000) motor1->ConfigPeakOutputReverse(-0.3, 0);
   else motor1->ConfigPeakOutputReverse(-1, 0);
 
-  if(pos < lastpos) {
-    motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
-    motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
-    lastpos = pos;
-  } else if(pos > lastpos) {
-    motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
-    motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
-    lastpos = pos;
-  }
+  // if(pos < lastpos) {
+  //   motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
+  //   motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+  //   lastpos = pos;
+  // } else if(pos > lastpos) {
+  //   motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
+  //   motor1->ConfigMotionCruiseVelocity(maxVelocity*10, 10);  //USED TO BE 6
+  //   lastpos = pos;
+  // }
 
   SmartDashboard::PutNumber("Lift encoder", GetLiftPosition());
   SmartDashboard::PutNumber("Lift velocity", motor1->GetSelectedSensorVelocity(0));

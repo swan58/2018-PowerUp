@@ -231,7 +231,7 @@ bool Autonomous::Sw1L() {
       if(autoDrive->DriveDistance(1, 1)) autoState++;
       break;
     case 8:
-      if(autoDrive->TurnAngle(0.65, 100, 1.5)) autoState++;
+      if(autoDrive->TurnAngle(0.65, 100, 1.2)) autoState++;
       break;
     case 9:
       autoMan->Release();
@@ -243,7 +243,18 @@ bool Autonomous::Sw1L() {
       break;
     case 11:
       autoMan->SetIntakeSpeed(0);
-      if(autoDrive->DriveDistance(1, -0.3)) autoState++;
+      if(autoDrive->DriveDistance(1, -0.2)) autoState++;
+      break;
+    case 12:
+      autoLift->SetMidPosition();
+      autoState++;
+      break;
+    case 13:
+      if(Wait(0.3)) autoState++;
+      break;
+    case 14:
+      autoMan->SetIntakeSpeed(1);
+      if(autoDrive->DriveDistance(1, 0.2)) autoState++;
       break;
     default:
       Stop();
