@@ -13,7 +13,7 @@
 
 namespace components {
   class Manipulator {
-    Spark *intakeLeft, *intakeRight;
+  //  Spark *intakeLeft, *intakeRight;
     DoubleSolenoid *restrainer;
 
     public:
@@ -26,6 +26,7 @@ namespace components {
       void OverrideIntake(bool overridden);
 
     private:
+      TalonSRX *left, *right;
       bool intakeOverride = false;
       double intakeSpeedL = 0.0;
       double intakeSpeedR = 0.0;

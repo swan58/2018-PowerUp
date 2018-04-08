@@ -79,7 +79,7 @@ void Drive::TankDrive(double left, double right, bool square, double maxspeed) {
 }
 
 bool Drive::EncoderTurn(double speed, double angle, double timeout) {
-  if(turning) {
+  if(driving) {
     left1->Set(ControlMode::MotionMagic, finalDistance); //drive code in this format
     right1->Set(ControlMode::MotionMagic, -finalDistance);
 
@@ -97,8 +97,6 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
 	 	  return true;
     }
   } else {
-    left1->SetSelectedSensorPosition(0,0,10);
-    right1->SetSelectedSensorPosition(0,0,10);
     timeoutCheck->Reset();
     int encoderCount = (2.199114857712855 * (angle/360.0)) * kFG;
     double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
@@ -130,7 +128,9 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
     right1->Config_kP(0,P,0);
     right1->Config_kI(0,I,0);
     right1->Config_kD(0,D,0);
+    driving = true;
   }
+  return false;
 }
 
 // Start or continue a turn

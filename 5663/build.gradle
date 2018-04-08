@@ -11,7 +11,8 @@ deploy {
         artifact("robotCode", jaci.openrio.gradle.frc.FRCNativeArtifact) {
             targets << "roborio5663"
             component = 'frcUserProgram'
-          //  debug = true
+            predeploy << { execute 'rm frcUserProgram' }
+            //debug = true
         }
         fileCollectionArtifact('paths') {
             files = project(':common').fileTree(dir: 'src/paths', include: '*.csv')
