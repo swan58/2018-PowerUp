@@ -536,7 +536,7 @@ bool Autonomous::Sc1L() {
       if(autoDrive->DriveDistance(1, 6.0)) autoState++;
       break;
     case 1:
-      if(autoDrive->TurnAngle(0.65, 50, 1)) autoState++;
+      if(autoDrive->TurnAngle(0.65, 35, 1)) autoState++;
       break;
     case 2:
       autoLift->SetHighPosition();
