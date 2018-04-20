@@ -46,6 +46,7 @@ class Robot : public IterativeRobot {
   SendableChooser<int> *StartingPosition; // Choose starting position
   SendableChooser<int> *AutoWait; // Time to wait before starting auto
   SendableChooser<int> *FarMode; // Chooser to disable far switch/scale
+  SendableChooser<string> *GameData;
   Drive *drive;
   Lift *lift;
   Ramp *ramp;
@@ -75,6 +76,7 @@ public:
     StartingPosition = new SendableChooser<int>;
     AutoWait = new SendableChooser<int>;
     FarMode = new SendableChooser<int>;
+    GameData = new SendableChooser<string>;
 
     drive = new Drive(1, 2, 3,  //left
                       6, 5, 4,  //right
@@ -116,9 +118,17 @@ public:
     AutoWait->AddObject("9S",(int) 9);
     SmartDashboard::PutData("AutoWait", AutoWait);
 
-    FarMode->AddDefault("Enable Far Switch",(int) 1);
-    FarMode->AddObject("Disable Far Switch",(int) 0);
+    FarMode->AddObject("Disable Far Mode",(int) 0);
+    FarMode->AddDefault("Enable Far Mode",(int) 1);
+    FarMode->AddObject("Stay near home",(int) 2);
     SmartDashboard::PutData("FarMode", FarMode);
+
+    GameData->AddDefault("Automatic", "Auto");
+    GameData->AddObject("L, L", "LLL");
+    GameData->AddObject("L, R", "LRL");
+    GameData->AddObject("R, L", "RLR");
+    GameData->AddObject("R, R", "RRR");
+    SmartDashboard::PutData("GameData", GameData);
 
     station = new Joystick(2);
   }
@@ -130,6 +140,7 @@ public:
     lift->ResetEncoder();
     lift->SetLowPosition();
 
+    //auton->SetGameData(GameData->GetSelected());
     auton->SetFarMode((int)FarMode->GetSelected());
     auton->SetStageOne((int)AutoChooser->GetSelected(), (int)StartingPosition->GetSelected(), (int)AutoWait->GetSelected());
     auton->ChooseStage();
@@ -154,7 +165,7 @@ public:
   //———[drivetrain]—————————————————————————————————————————————————————————————
     if(lift->GetLiftPosition() > 14000) maxspeed = 0.35;
     else if(9000 <= lift->GetLiftPosition() && lift->GetLiftPosition() <= 14000) {
-      maxspeed = (-(1.0/300.0) * (45.0 - ( sqrt(15.0) * sqrt(15835.0-lift->GetLiftPosition()) ) )) - 0.1;
+      maxspeed = (-(1.0/300.0) * (45.0 - ( sqrt(15.0) * sqrt(15835.0-lift->GetLiftPosition()) ) )) - 0.125;
     }
     else if(lift->GetLiftPosition() < 9000) maxspeed = 1;
 
@@ -187,11 +198,11 @@ public:
 
 //———[controller 2]—————————————————————————————————————————————————————————————
   //———[lift]———————————————————————————————————————————————————————————————————
-    if(xbox2->GetAButtonPressed()) {
+    if(xbox2->GetAButtonPressed() || xbox2->GetAButton()) {
       lift->SetLowPosition();
-    } else if(xbox2->GetBButtonPressed()) {
+    } else if(xbox2->GetBButtonPressed() || xbox2->GetBButton()) {
       lift->SetMidPosition();
-    } else if(xbox2->GetYButtonPressed()) {
+    } else if(xbox2->GetYButtonPressed() || xbox2->GetYButton()) {
       lift->SetHighPosition();
     }
     lift->SetSpeed(-xbox2->GetY(xbox2->kRightHand));
@@ -200,7 +211,7 @@ public:
     lift->OverrideLift(xbox2->GetBackButton());
 
   //———[manipulator]————————————————————————————————————————————————————————————
-    if(xbox2->GetBumper(xbox2->kLeftHand)) {
+    if(xbox2->GetBumper(xbox2->kLeftHand) || xbox2->GetBumper(xbox2->kRightHand)) {
       if(fabs(xbox2->GetY(xbox2->kLeftHand)) > 0.18) {
         man->OverrideIntake(true);
         man->SetIntakeSpeed(-xbox2->GetY(xbox2->kLeftHand), -xbox2->GetX(xbox2->kLeftHand));

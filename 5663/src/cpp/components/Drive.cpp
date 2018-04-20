@@ -98,9 +98,10 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
     }
   } else {
     timeoutCheck->Reset();
-    int encoderCount = (2.199114857712855 * (angle/360.0)) * kFG;
-    double F = 3.5, P = 4.0, I = 0, D = 0; // P = 2.0
-    int acceleration = 200;
+    //2.199114857712855
+    int encoderCount = (1.900663555421824909 * (angle/360.0)) * kFG;
+    double F = 3.5, P = 4.5, I = 0, D = 0; // P = 2.0
+    int acceleration = 300;
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     leftFinalDistance = encoderCount;
@@ -190,7 +191,7 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
     double F = 3.5, P = 4.0, I = 0, D = 0;
     // int acceleration = 380;
     // if(currentGear) acceleration = 200;
-    int acceleration = 600; // NEW
+    int acceleration = 200; // NEW
     left1->SetSelectedSensorPosition(0,0,10);
     right1->SetSelectedSensorPosition(0,0,10);
     leftFinalDistance = encoderCount;
@@ -227,13 +228,13 @@ bool Drive::DriveDistance(double speed, double distance, double timeout) {
 
   } else {
 
-    if((abs(left1->GetSelectedSensorPosition(0)) == 1 || left1->GetSelectedSensorPosition(0) == 0) && abs(right1->GetSelectedSensorPosition(0)) > 100) {
+    if((abs(left1->GetSelectedSensorPosition(0)) == 1 || left1->GetSelectedSensorPosition(0) == 0) && abs(right1->GetSelectedSensorPosition(0)) > 500) {
       //encoder broke on left
       SmartDashboard::PutBoolean("Encoder Broke: ", true);
       left1->Set(ControlMode::PercentOutput, right1->GetMotorOutputPercent());
       leftFinalDistance = 0;
     }
-    else if((abs(right1->GetSelectedSensorPosition(0)) == 1 || right1->GetSelectedSensorPosition(0) == 0) && abs(left1->GetSelectedSensorPosition(0)) > 100) {
+    else if((abs(right1->GetSelectedSensorPosition(0)) == 1 || right1->GetSelectedSensorPosition(0) == 0) && abs(left1->GetSelectedSensorPosition(0)) > 500) {
       //encoder broke on right
       SmartDashboard::PutBoolean("Encoder Broke: ", true);
       right1->Set(ControlMode::PercentOutput, left1->GetMotorOutputPercent());

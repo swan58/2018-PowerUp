@@ -20,6 +20,7 @@ namespace autonomous {
     public:
       Autonomous(Drive *drive, Lift *lift, Manipulator *man);
       void SetFarMode(int choice);
+      //void SetGameData(std::string data);
       void SetStageOne(int mode, int startingPosition, int wait);
       void SetStageTwo(int mode);
       void SetStageThree(int mode);
@@ -49,12 +50,15 @@ namespace autonomous {
       bool Sc3R();
 
       std::string gameData;
+      std::string manualData;
       std::function<bool()> autoFunction,
       stage1 = [=](){return this->Baseline();},
       stage2 = [=](){return this->Stop();},
       stage3 = [=](){return this->Stop();};
       bool FarModeEnabled = true;
+      bool StayHome = false;
       int autoState = 0, currentStage = 0, startingPosition = -1;
       bool waiting = false; int waitStart = 0;
+      bool overrideData = false;
   };
 }

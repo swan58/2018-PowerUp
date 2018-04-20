@@ -40,8 +40,8 @@ void Lift::SetHighPosition() {
   if(!encoderOverride) {
     pos = 2;
     if(highPosition < GetLiftPosition()) {
-      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
-      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      motor1->ConfigMotionAcceleration(maxVelocity*2, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2, 10);  //USED TO BE 2
       lastpos = pos;
     } else if(highPosition > GetLiftPosition()) {
       motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
@@ -59,8 +59,8 @@ void Lift::SetMidPosition() {
   if(!encoderOverride) {
     pos = 1;
     if(midPosition < GetLiftPosition()) {
-      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
-      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      motor1->ConfigMotionAcceleration(maxVelocity*2, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2, 10);  //USED TO BE 2
       lastpos = pos;
     } else if(midPosition > GetLiftPosition()) {
       motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
@@ -78,8 +78,8 @@ void Lift::SetLowPosition() {
   if(!encoderOverride) {
     pos = 0;
     if(0 < GetLiftPosition()) {
-      motor1->ConfigMotionAcceleration(maxVelocity*2.5, 10);   //USED TO BE 2
-      motor1->ConfigMotionCruiseVelocity(maxVelocity*2.5, 10);  //USED TO BE 2
+      motor1->ConfigMotionAcceleration(maxVelocity*2, 10);   //USED TO BE 2
+      motor1->ConfigMotionCruiseVelocity(maxVelocity*2, 10);  //USED TO BE 2
       lastpos = pos;
     } else if(0 > GetLiftPosition()) {
       motor1->ConfigMotionAcceleration(maxVelocity*10, 10);    //USED TO BE 5
@@ -125,7 +125,7 @@ void Lift::SetSpeed(double speed) {
        //Lower lift boundries
        if(lowSwitch->Get() && speed < 0) speed = 0; //limit switch
        if(GetLiftPosition() < 6000 && speed < 0) speed *= 0.2;  //Soft speed limit
-       if(motor1->GetSelectedSensorVelocity(0) < -600 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
+       if(motor1->GetSelectedSensorVelocity(0) < -300 && GetLiftPosition() < 7000) speed = 0;  //Hardstop
        //Upper lift boundries
        if(topSwitch->Get() && speed > 0) speed = 0; //limit switch
        if(GetLiftPosition() > 21000 && speed > 0) speed *= 0.85; //Soft speed limit
