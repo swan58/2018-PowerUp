@@ -161,6 +161,7 @@ public:
   }
 
   void TeleopPeriodic() {
+    drive->SetRampRate(0);
 //———[controller 1]—————————————————————————————————————————————————————————————
   //———[drivetrain]—————————————————————————————————————————————————————————————
     if(lift->GetLiftPosition() > 14000) maxspeed = 0.35;

@@ -96,6 +96,22 @@ bool Drive::EncoderTurn(double speed, double angle, double timeout) {
       driving = false;
 	 	  return true;
     }
+
+    if((abs(left1->GetSelectedSensorPosition(0)) == 1 || left1->GetSelectedSensorPosition(0) == 0) && abs(right1->GetSelectedSensorPosition(0)) > 500) {
+      //encoder broke on left
+      SmartDashboard::PutBoolean("Encoder Broke: ", true);
+      left1->Set(ControlMode::PercentOutput, -right1->GetMotorOutputPercent());
+      leftFinalDistance = 0;
+    }
+    else if((abs(right1->GetSelectedSensorPosition(0)) == 1 || right1->GetSelectedSensorPosition(0) == 0) && abs(left1->GetSelectedSensorPosition(0)) > 500) {
+      //encoder broke on right
+      SmartDashboard::PutBoolean("Encoder Broke: ", true);
+      right1->Set(ControlMode::PercentOutput, -left1->GetMotorOutputPercent());
+      rightFinalDistance = 0;
+    } else {
+      SmartDashboard::PutBoolean("Encoder Broke: ", false);
+    }
+
   } else {
     timeoutCheck->Reset();
     //2.199114857712855

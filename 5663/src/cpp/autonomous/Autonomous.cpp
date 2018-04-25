@@ -581,7 +581,7 @@ bool Autonomous::Sc1L() {
       if(autoDrive->DriveDistance(1, 6.0)) autoState++;
       break;
     case 1:
-      if(autoDrive->EncoderTurn(0.65, 35, 1)) autoState++;
+      if(autoDrive->EncoderTurn(0.65, 55, 1.7)) autoState++;
       break;
     case 2:
       autoLift->SetHighPosition();
@@ -609,7 +609,7 @@ bool Autonomous::Sc1L() {
       if(Wait(1)) autoState++;
       break;
     case 9:
-      if(autoDrive->EncoderTurn(0.7, 80, 1.5)) autoState++;
+      if(autoDrive->EncoderTurn(0.7, 100, 1.5)) autoState++;
       break;
     case 10:
       autoMan->Release();
